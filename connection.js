@@ -1,9 +1,21 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-async function connectToMongo(url) {
-    return mongoose.connect(url);
-}
+const connectToMongo = async () => {
+    const uri = process.env.MONGO_URL; // Read from environment variable
+    if (!uri) {
+        throw new Error("MONGO_URL is not defined");
+    }
 
-module.exports = {
-    connectToMongo
-}
+    try {
+        await mongoose.connect(uri, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log("Connected to MongoDB");
+    } catch (error) {
+        console.error("Error connecting to MongoDB:", error);
+        process.exit(1); // Exit process if connection fails
+    }
+};
+
+module.exports = connectToMongo;
